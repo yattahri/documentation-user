@@ -35,6 +35,7 @@ extensions = [
     'demo_link',
     'github_link',
     'embedded_video',
+    'sphinx_sitemap'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -304,6 +305,8 @@ github_project = 'documentation-user'
 # Where are stored the localisations files
 locale_dirs = ['locale/']
 
+i18n_url_scheme = "/{version}/{lang}/{link}"
+
 LANGUAGES = {
     'de': 'German',
     'en': 'English',
@@ -407,6 +410,10 @@ def localize(app, pagename, templatename, context, doctree):
         (la.split('_')[0] if la != 'en' else 'x-default', _build_url(app.config.canonical_root, (la != 'en' and la or ''), pagename))
         for la in app.config.languages.split(',')
     ]
+    if not app.config.html_baseurl:
+        # remove last fragment containing the version
+        root = '/'.join(app.config.canonical_root.rstrip('/').split('/')[:-1])
+        app.config["html_baseurl"] = root
 
 def canonicalize(app, pagename, templatename, context, doctree):
     """ Adds a 'canonical' URL for the current document in the rendering
